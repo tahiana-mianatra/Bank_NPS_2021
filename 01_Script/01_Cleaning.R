@@ -12,7 +12,7 @@ gross_data<- read_excel(here::here("02_Input", "Base_VF.xlsx"))
 # Step 1 Excel has unwritten cells, remove QUEST = N/A and QUEST = blank
 gross_data <- gross_data%>%
   filter(!is.na(QUEST & QUEST != ""))
-# Step 2: Removing all the 11 (don't know from the note)
+# Step 2: Removing all the 11 (don't know from the note1)
 survey <- gross_data %>%
   mutate(across(
     .cols = c(Q7, Q9, Q11, Q13), # Specify columns
