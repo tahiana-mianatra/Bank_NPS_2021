@@ -16,7 +16,7 @@ gross_data <- gross_data%>%
 survey <- gross_data %>%
   mutate(across(
     .cols = c(Q7, Q9, Q11, Q13), # Specify columns
-    .fns = ~ replace(.x, .x == 11, NA)                # Replace function
+    .fns = ~ replace(.x, .x == 11, NA)                
   ))
 
 #Step 3 : Separating TOM from spontaneous
