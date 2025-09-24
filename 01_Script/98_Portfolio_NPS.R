@@ -110,10 +110,10 @@ NPS_long <- NPS_long %>%
 #Manially arrange the size
 NPS_long <- NPS_long %>%
   mutate(bank_label = case_when(
-    bank == "BNI" ~ paste0("<img src='", logo_path, "' width='60' height='50' />"),
-    bank == "BMOI" ~ paste0("<img src='", logo_path, "' width='60' height='50' />"),  # Adjust BMOI
+    bank == "BNI" ~ paste0("<img src='", logo_path, "' width='70' height='60' />"),
+    bank == "BMOI" ~ paste0("<img src='", logo_path, "' width='70' height='60' />"),  # Adjust BMOI
     bank == "BOA" ~ paste0("<img src='", logo_path, "' width='80' height='70' />"),
-    bank == "BRED" ~ paste0("<img src='", logo_path, "' width='80' height='70' />"),  # Adjust BRED
+    bank == "BRED" ~ paste0("<img src='", logo_path, "' width='100' height='90' />"),  # Adjust BRED
     TRUE ~ paste0("<img src='", logo_path, "' width='40' height='30' />")  # Default
   ))
 
@@ -156,6 +156,7 @@ p <- ggplot(NPS_long, aes(y = bank, x = percentage, fill = category)) +
     labels = correct_labels  # Use the REVERSED labels
   ) +
   labs(title = "Net Promoter Score")+
+  theme_minimal() +
   theme(
     plot.title = element_text(hjust = 0.5),# Center the title
     axis.title.x = element_blank(),
