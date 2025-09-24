@@ -1,5 +1,5 @@
-#Input: cleaned dataframe; survey
-#Out: NPS score graphics
+#Input: cleaned dataframe; survey & aware_long
+#Out: NPS score graphics & brand awareness stacked barplot
 #NPS: Promoter = 9 to 10, neutral 7 to 8, detractor 6 to 0
 #Load library
 library(here)
@@ -13,7 +13,6 @@ library(ggtext)
 
 #Load data
 load(here::here("03_Df_output", "cleaned_data.RData"))
-rm("aware_long")
 #Load function
 round_excel <- function(x, digits = 0) {
   posneg <- sign(x)
@@ -71,8 +70,8 @@ NPS_summary <- NPS_need %>%
 #Arrange 
 NPS_summary <- NPS_summary%>%
   mutate(bank = factor(bank,
-                     levels = c("BNI", "BMOI", "BOA", "BRED"),
-                     ordered = TRUE))
+                       levels = c("BNI", "BMOI", "BOA", "BRED"),
+                       ordered = TRUE))
 
 
 
@@ -101,20 +100,20 @@ NPS_long <- NPS_to_plot %>%
 #Preparing the image
 logo_mapping <- data.frame(
   bank = c("BNI", "BMOI", "BOA", "BRED"),
-  logo_path = c(here::here("02_Input", "BNI_logo.png"),
-                here::here("02_Input", "BMOI_logo.png"),
-                here::here("02_Input", "BOA_logo.png"), 
-                here::here("02_Input","BRED_logo.jpg"))
+  logo_path = c(here::here("02_Input", "Bank_1.png"),
+                here::here("02_Input", "Bank_2.png"),
+                here::here("02_Input", "Bank_3.png"), 
+                here::here("02_Input","Bank_4.png"))
 )
 NPS_long <- NPS_long %>%
   left_join(logo_mapping, by = "bank") #Join logo_path to main data
 #Manially arrange the size
 NPS_long <- NPS_long %>%
   mutate(bank_label = case_when(
-    bank == "BNI" ~ paste0("<img src='", logo_path, "' width='90' height='80' />"),
+    bank == "BNI" ~ paste0("<img src='", logo_path, "' width='60' height='50' />"),
     bank == "BMOI" ~ paste0("<img src='", logo_path, "' width='60' height='50' />"),  # Adjust BMOI
-    bank == "BOA" ~ paste0("<img src='", logo_path, "' width='50' height='40' />"),
-    bank == "BRED" ~ paste0("<img src='", logo_path, "' width='50' height='40' />"),  # Adjust BRED
+    bank == "BOA" ~ paste0("<img src='", logo_path, "' width='80' height='70' />"),
+    bank == "BRED" ~ paste0("<img src='", logo_path, "' width='80' height='70' />"),  # Adjust BRED
     TRUE ~ paste0("<img src='", logo_path, "' width='40' height='30' />")  # Default
   ))
 
@@ -168,5 +167,5 @@ p <- ggplot(NPS_long, aes(y = bank, x = percentage, fill = category)) +
   ) +
   labs(x = NULL, y = "Bank") 
 print(p)
-ggsave(here::here("04_Graphic_output","NPS.png"),
+ggsave(here::here("04_Graphic_output","NPS_portfolio.png"),
        plot = p, width = 10, height = 6, dpi = 600)
