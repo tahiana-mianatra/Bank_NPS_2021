@@ -127,11 +127,11 @@ bb <- aware_long_complete %>%
 #Writing of all the cleaned result
 cleaned_data <- list(
   "survey" = survey,
-  "aware_long" = aware_long,
+  "aware_long" = aware_long_complete,
   "survey_complete" = survey_complete)
 
 write.xlsx(cleaned_data,here::here("03_Df_output", "cleaned_data.xlsx"))
 
 #Wrting in rdata
-save(survey, aware_long,
+save(survey, aware_long_complete,
      file = here::here("03_Df_output", "cleaned_data.RData"))
