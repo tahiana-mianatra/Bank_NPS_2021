@@ -140,8 +140,8 @@ p <- ggplot(NPS_long, aes(y = bank, x = percentage, fill = category)) +
   geom_label(data = NPS_long %>% distinct(bank, .keep_all = TRUE),
              aes(y = bank, x = -5,
                  label = paste0("NPS: ", ifelse(nps_score > 0, "+", ""), round_excel(nps_score, 1)),
-                 color = ifelse(nps_score > 0, "#27AE60",  # Use COLOR instead of FILL
-                                ifelse(nps_score < 0, "#E74C3C", "gray50"))),
+                 color = ifelse(nps_score > 0,"#E74C3C" ,  # Use COLOR instead of FILL
+                                ifelse(nps_score < 0, "#27AE60", "gray50"))),
              hjust = 0, size = 4, fontface = "bold", 
              fill = "white",  # White background for all NPS labels
              show.legend = FALSE) +  # Explicitly hide legend for this layer
