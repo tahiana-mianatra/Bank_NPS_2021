@@ -50,24 +50,35 @@ brand_reach <- aware_df %>%
   group_by(brand) %>%
   summarise(
     reach = n_distinct(QUEST),  # Actual unique people who mentioned this brand
-    reach_percentage = reach / n_distinct(aware_df$QUEST) * 100
+    total_percentage = reach / n_distinct(aware_df$QUEST) * 100,
+    total_perc_text = round_excel(total_percentage)
   ) %>%
   left_join(code_to_label, by = c("brand" = "Code")) %>%
   mutate(brand = Label) %>%
   select(-Label)
 
-# Add Total rows with actual reach
-total_rows <- brand_reach %>%
-  mutate(
-    type = "Total",
-    n = reach,
-    percentage = reach_percentage,
-    perc_text =round_excel(reach_percentage),
-    total_respondents = n_distinct(aware_df$QUEST)
-  ) %>%
-  select(type, brand, n, total_respondents, percentage, perc_text)
+brand_see <- brand_see %>%
+  left_join(brand_reach %>%
+              select(brand, total_percentage, total_perc_text),
+            by = "brand")
+#Arranging the order of type of awareness
+brand_see <- brand_see %>%
+  mutate(type = factor(type,
+                       levels = c("Assisted","Spontaneous", "TOM"),
+                       ordered = TRUE)) %>%
+  mutate(brand = factor(brand,
+                       levels = c("Bank1", "Bank2", "Bank3", "Bank4",
+                                  "Bank5", "Bank6", "Bank7", "Bank8",
+                                  "Bank9", "Bank10", "Bank11", "Bank12", "Other"),
+                       ordered = TRUE))
+#Plotting
+p <- ggplot(brand_see, aes( x =brand, y = percentage, fill = type ))+
+  geom_col(position = "stack")+
+  # Add triangle markers for total
+  geom_point(data = brand_see,
+             aes(x = brand, y = total_percentage),
+             shape = 17, size = 3, color = "green",
+             inherit.aes = FALSE)  # shape 17 = triangle
 
-# Combine with original data
-brand_see_with_total <- bind_rows(brand_see, total_rows) %>%
-  mutate(type = factor(type, levels = c("TOM", "Spontaneous", "Assisted", "Total"))) %>%
-  arrange(brand, type)
+print(p)  
+
