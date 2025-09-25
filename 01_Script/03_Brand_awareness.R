@@ -74,11 +74,40 @@ brand_see <- brand_see %>%
 #Plotting
 p <- ggplot(brand_see, aes( x =brand, y = percentage, fill = type ))+
   geom_col(position = "stack")+
+  geom_text(
+    data = brand_see %>% 
+      filter(perc_text > 1) %>%
+      mutate(
+        text_color = ifelse(type == "Assisted", "black", "white")
+      ),
+    aes(
+      label = paste0(perc_text, "%"),
+      color = I(text_color)
+    ),
+    position = position_stack(vjust = 0.5),  # Use the calculated vjust
+    size = 4,
+    show.legend = FALSE
+  ) +
   # Add triangle markers for total
   geom_point(data = brand_see,
              aes(x = brand, y = total_percentage),
              shape = 17, size = 3, color = "green",
-             inherit.aes = FALSE)  # shape 17 = triangle
+             inherit.aes = FALSE) +  # shape 17 = triangle
+  scale_fill_manual(values = c(
+    "Assisted" = "#FFFF9C",   # deep red
+    "Spontaneous"   = "#5BC2D9",   # professional amber
+    "TOM"  = "#005AB5"    # dark teal green
+  ))+
+  scale_y_continuous( limits = c(-5, 110))+
+  labs(title = "Brand Awareness")+
+  theme_minimal()+
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    panel.grid = element_blank(),
+    axis.text.x = element_text(face = "bold", colour = "black"),
+    axis.text.y = element_blank(), # Fixed: Added closing parenthesis
+    legend.position = "none" # Fixed: This line must end with a comma if you add more theme elements later
+  )
 
 print(p)  
 
