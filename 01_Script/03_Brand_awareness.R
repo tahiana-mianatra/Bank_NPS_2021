@@ -65,6 +65,7 @@ brand_see <- brand_see %>%
 brand_see <- brand_see %>%
   mutate(type = factor(type,
                        levels = c("Assisted","Spontaneous", "TOM"),
+                       labels = c("Assisted", "Spontaneous", "Top of Mind"),  # Add labels parameter
                        ordered = TRUE)) %>%
   mutate(brand = factor(brand,
                        levels = c("Bank1", "Bank2", "Bank3", "Bank4",
@@ -91,24 +92,29 @@ p <- ggplot(brand_see, aes( x =brand, y = percentage, fill = type ))+
   # Add triangle markers for total
   geom_point(
     data = brand_see,
-    aes(x = brand, y = total_percentage, shape = "Global", color = "Global"),
+    aes(x = brand, y = total_percentage, shape = "Global awareness", color = "Global awareness"),
     size = 3,
     inherit.aes = FALSE
   ) +
   
   # add these (put them after your scale_fill_manual)
-  scale_shape_manual(name = "Awareness", values = c("Global" = 17)) +
-  scale_color_manual(name = "Awareness", values = c("Global" = "green")) +  # shape 17 = triangle
+  scale_shape_manual(name = "Awareness", values = c("Global awareness" = 17)) +
+  scale_color_manual(name = "Awareness", values = c("Global awareness" = "green")) +  # shape 17 = triangle
   scale_fill_manual(values = c(
     "Assisted" = "#FFFF9C",   # deep red
     "Spontaneous"   = "#5BC2D9",   # professional amber
-    "TOM"  = "#005AB5"    # dark teal green
+    "Top of Mind"  = "#005AB5"    # dark teal green
   ))+
   geom_label(data = brand_see %>% distinct(brand, total_perc_text, .keep_all =TRUE),
              aes(x = brand, y = total_perc_text +5,
                  label = paste0(total_perc_text, "%")),
              inherit.aes = FALSE)+
   labs(title = "Brand Awareness")+
+  guides(
+    fill = guide_legend(title = NULL),
+    shape = guide_legend(title = NULL),
+    color = guide_legend(title = NULL)
+  )+
   theme_minimal()+
   theme(
     plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
@@ -118,4 +124,5 @@ p <- ggplot(brand_see, aes( x =brand, y = percentage, fill = type ))+
   )
 
 print(p)  
-
+ggsave(here::here("04_Graphic_output","aware.png"),
+       plot = p, width = 10, height = 6, dpi = 600)
