@@ -9,7 +9,7 @@ library(scales)
 library(magick)
 library(grid)
 library(ggtext)
-
+library(cowplot)
 #Load data
 load(here::here("03_Df_output", "cleaned_data.RData"))
 code_to_label <- read_excel(here::here("02_Input", "Code_to_label.xlsx"), sheet = "Bank_code")
@@ -51,7 +51,7 @@ brand_reach <- aware_df %>%
   summarise(
     reach = n_distinct(QUEST),  # Actual unique people who mentioned this brand
     total_percentage = reach / n_distinct(aware_df$QUEST) * 100,
-    total_perc_text = round_excel(total_percentage)
+    total_perc_text = round_excel(total_percentage, 1)
   ) %>%
   left_join(code_to_label, by = c("brand" = "Code")) %>%
   mutate(brand = Label) %>%
@@ -89,24 +89,32 @@ p <- ggplot(brand_see, aes( x =brand, y = percentage, fill = type ))+
     show.legend = FALSE
   ) +
   # Add triangle markers for total
-  geom_point(data = brand_see,
-             aes(x = brand, y = total_percentage),
-             shape = 17, size = 3, color = "green",
-             inherit.aes = FALSE) +  # shape 17 = triangle
+  geom_point(
+    data = brand_see,
+    aes(x = brand, y = total_percentage, shape = "Global", color = "Global"),
+    size = 3,
+    inherit.aes = FALSE
+  ) +
+  
+  # add these (put them after your scale_fill_manual)
+  scale_shape_manual(name = "Awareness", values = c("Global" = 17)) +
+  scale_color_manual(name = "Awareness", values = c("Global" = "green")) +  # shape 17 = triangle
   scale_fill_manual(values = c(
     "Assisted" = "#FFFF9C",   # deep red
     "Spontaneous"   = "#5BC2D9",   # professional amber
     "TOM"  = "#005AB5"    # dark teal green
   ))+
-  scale_y_continuous( limits = c(-5, 110))+
+  geom_label(data = brand_see %>% distinct(brand, total_perc_text, .keep_all =TRUE),
+             aes(x = brand, y = total_perc_text +5,
+                 label = paste0(total_perc_text, "%")),
+             inherit.aes = FALSE)+
   labs(title = "Brand Awareness")+
   theme_minimal()+
   theme(
     plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
     panel.grid = element_blank(),
     axis.text.x = element_text(face = "bold", colour = "black"),
-    axis.text.y = element_blank(), # Fixed: Added closing parenthesis
-    legend.position = "none" # Fixed: This line must end with a comma if you add more theme elements later
+    axis.text.y = element_blank() # Fixed: Added closing parenthesis
   )
 
 print(p)  
