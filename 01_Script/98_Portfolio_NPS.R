@@ -158,7 +158,7 @@ p <- ggplot(NPS_long, aes(y = bank, x = percentage, fill = category)) +
   labs(title = "Net Promoter Score")+
   theme_minimal() +
   theme(
-    plot.title = element_text(hjust = 0.5),# Center the title
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
     axis.title.x = element_blank(),
     axis.text.x = element_blank(),
     axis.ticks.x = element_blank(),
