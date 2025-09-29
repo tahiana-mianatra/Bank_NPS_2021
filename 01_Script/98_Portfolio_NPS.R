@@ -156,7 +156,7 @@ p <- ggplot(NPS_long, aes(y = bank, x = percentage, fill = category)) +
     labels = correct_labels  # Use the REVERSED labels
   ) +
   labs(title = "Net Promoter Score")+
-  theme_minimal() +
+  theme_void() + #Theme minimal is not working with Asus
   theme(
     plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
     axis.title.x = element_blank(),
